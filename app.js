@@ -10,19 +10,19 @@ const RESULT_COMPUTER_WINS = 'COMPUTER_WINS';
 
 let gameIsRunning = false;
 
-const getPlayerChoice = function () {
+const getPlayerChoice = () => {
   const selection = prompt(
     `${ROCK}, ${PAPER} or ${SCISSORS}?`,
     ''
   ).toUpperCase();
   if (selection !== ROCK && selection !== PAPER && selection !== SCISSORS) {
-    alert(`Invaled choice! We chose ${DEFAULT_USER_CHOICE} for you`);
-    return DEFAULT_USER_CHOICE;
+    alert(`Invalid choice! We chose ${DEFAULT_USER_CHOICE} for you`);
+    return;
   }
   return selection;
 };
 
-const getComputerChoice = function () {
+const getComputerChoice = () =>  {
   const randomValue = Math.random();
   if (randomValue < 0.34) {
     return ROCK;
@@ -33,21 +33,16 @@ const getComputerChoice = function () {
   }
 };
 
-const getWinner = function (computerChoice, playerChoice) {
-  if (computerChoice === playerChoice) {
-    return RESULT_DRAW;
-  } else if (
-    computerChoice === ROCK && playerChoice === PAPER ||
-    computerChoice === PAPER && playerChoice === SCISSORS ||
-    computerChoice === SCISSORS && playerChoice === ROCK
-  ) {
-    return RESULT_PLAYER_WINS;
-  } else {
-    return RESULT_COMPUTER_WINS;
-  }
-};
+const getWinner = (computerChoice, playerChoice = DEFAULT_USER_CHOICE) =>
+  computerChoice === playerChoice
+    ? RESULT_DRAW
+    : (computerChoice === ROCK && playerChoice === PAPER) ||
+      (computerChoice === PAPER && playerChoice === SCISSORS) ||
+      (computerChoice === SCISSORS && playerChoice === ROCK)
+    ? RESULT_PLAYER_WINS
+    : RESULT_COMPUTER_WINS;
 
-startGameBtn.addEventListener('click', function () {
+startGameBtn.addEventListener('click', () => {
   if (gameIsRunning) {
     return;
   }
@@ -55,6 +50,20 @@ startGameBtn.addEventListener('click', function () {
   console.log('Game is starting...');
   const playerSelection = getPlayerChoice();
   const computerChoice = getComputerChoice();
-  const winner = getWinner(computerChoice, playerSelection);
-  console.log(winner);
+  let winner;
+  if(playerSelection) {
+    winner = getWinner(computerChoice, playerSelection);
+  } else {
+    winner = getWinner(computerChoice, playerSelection);
+  }
+  let message = `You picked ${playerSelection || DEFAULT_USER_CHOICE}, computer picked ${computerChoice}, therefore you `;
+  if (winner === RESULT_DRAW) {
+    message = message + 'had a draw.';
+  } else if(winner === RESULT_PLAYER_WINS) {
+    message = message + 'won.';
+  } else {
+    message = message + 'lost.';
+  }
+  alert(message);
+  gameIsRunning = false;
 });
